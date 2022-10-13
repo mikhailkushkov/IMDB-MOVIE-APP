@@ -3,8 +3,12 @@
     <h3 class="list-title">IMDB Top 250</h3>
     <BRow>
       <template v-if="isExist">
-        <BCol cols="3" v-for="(movie, key) in list" :key="key">
-          <MovieItem :movie="movie" />
+        <BCol sm="6" md="4" v-for="(movie, key) in list" :key="key">
+          <MovieItem
+            :movie="movie"
+            @mouseover.native="onMouseOver(movie.Poster)"
+            @removeItem="onRemoveItem"
+          />
         </BCol>
       </template>
       <template v-else>
@@ -15,6 +19,7 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import MovieItem from "./MovieItem";
 export default {
   name: "MoviesList",
@@ -32,6 +37,22 @@ export default {
       return Boolean(Object.keys(this.list).length);
     },
   },
+  methods: {
+    ...mapActions("movies", ["removeMovie"]),
+    onMouseOver(poster) {
+      this.$emit("changePoster", poster);
+    },
+    async onRemoveItem({ id, title }) {
+      console.log(id, title);
+      const isConfirmed = await this.$bvModal.msgBoxConfirm(
+        `Are you sure you want to delete ${title}?`
+      );
+
+      if (isConfirmed) {
+        this.removeMovie(id);
+      }
+    },
+  },
 };
 </script>
 
@@ -39,5 +60,6 @@ export default {
 .list-title {
   font-style: 50px;
   margin-bottom: 30px;
+  color: #ffffff;
 }
 </style>

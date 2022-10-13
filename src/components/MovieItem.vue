@@ -11,7 +11,13 @@
           <BButton size="md" block variant="outline-light">Edit</BButton>
         </div>
         <div class="col">
-          <BButton size="md" block variant="outline-light">Remove</BButton>
+          <BButton
+            size="md"
+            block
+            variant="outline-light"
+            @click="emitRemoveEvent"
+            >Remove</BButton
+          >
         </div>
       </div>
     </div>
@@ -32,6 +38,14 @@ export default {
       return {
         "background-image": `url(${this.movie.Poster})`,
       };
+    },
+  },
+  methods: {
+    emitRemoveEvent() {
+      this.$emit("removeItem", {
+        id: this.movie.imdbID,
+        title: this.movie.Title,
+      });
     },
   },
 };
@@ -60,6 +74,7 @@ export default {
 
     .movie-info-wrap {
       opacity: 1;
+      background: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
     }
   }
 
@@ -84,7 +99,7 @@ export default {
     transition: all 0.2s ease;
 
     .movie-item-info {
-      background: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
+      //background: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
       color: #ffffff;
       @include text-shadow;
 

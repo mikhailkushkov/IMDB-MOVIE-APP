@@ -10,7 +10,7 @@ function serializeResponse(movies) {
 }
 
 // деструктурируем - достанем свойство MOVIES
-const { MOVIES } = mutations;
+const { MOVIES, CURRENT_PAGE, REMOVE_MOVIE } = mutations;
 
 const moviesStore = {
   namespaced: true,
@@ -26,11 +26,18 @@ const moviesStore = {
     slicedIDs: ({ top250IDs }) => (from, to) => top250IDs.slice(from, to),
     currentPage: ({ currentPage }) => currentPage,
     moviesPerPage: ({ moviesPerPage }) => moviesPerPage,
+    moviesLength: ({ top250IDs }) => Object.keys(top250IDs).length,
   },
   mutations: {
     // переопределяем movies в нашей store
     [MOVIES](state, value) {
       state.movies = value;
+    },
+    [CURRENT_PAGE](state, value) {
+      state.currentPage = value;
+    },
+    [REMOVE_MOVIE](state, index) {
+      state.top250IDs.splice(index, 1);
     },
   },
   actions: {
@@ -41,8 +48,9 @@ const moviesStore = {
       },
       root: true,
     },
-    async fetchMovies({ getters, commit }) {
+    async fetchMovies({ getters, commit, dispatch }) {
       try {
+        dispatch("toggleLoader", true, { root: true });
         const { currentPage, moviesPerPage, slicedIDs } = getters;
         const from = currentPage * moviesPerPage - moviesPerPage;
         const to = currentPage * moviesPerPage;
@@ -55,6 +63,20 @@ const moviesStore = {
         commit(MOVIES, movies);
       } catch (error) {
         console.log(error);
+      } finally {
+        dispatch("toggleLoader", false, { root: true });
+      }
+    },
+    changeCurrentPage({ commit, dispatch }, page) {
+      commit(CURRENT_PAGE, page);
+      dispatch("fetchMovies");
+    },
+    removeMovie({ commit, dispatch, state }, id) {
+      const index = state.top250IDs.findIndex((item) => item === id);
+
+      if (index !== -1) {
+        commit(REMOVE_MOVIE, index);
+        dispatch("fetchMovies");
       }
     },
   },
