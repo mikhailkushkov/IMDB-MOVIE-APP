@@ -43,7 +43,6 @@ export default {
       this.$emit("changePoster", poster);
     },
     async onRemoveItem({ id, title }) {
-      console.log(id, title);
       const isConfirmed = await this.$bvModal.msgBoxConfirm(
         `Are you sure you want to delete ${title}?`
       );
