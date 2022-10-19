@@ -1,4 +1,4 @@
-# movieapp
+# MOVIE-APP
 
 ## Project setup
 ```
