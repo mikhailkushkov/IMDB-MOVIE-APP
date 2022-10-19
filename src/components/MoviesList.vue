@@ -1,6 +1,6 @@
 <template>
   <BContainer>
-    <h3 class="list-title">IMDB Top 250</h3>
+    <h3 class="list-title">{{ listTitle }}</h3>
     <BRow>
       <template v-if="isExist">
         <BCol sm="6" md="4" v-for="(movie, key) in list" :key="key">
@@ -8,6 +8,7 @@
             :movie="movie"
             @mouseover.native="onMouseOver(movie.Poster)"
             @removeItem="onRemoveItem"
+            @showModal="onShowMovieInfo"
           />
         </BCol>
       </template>
@@ -15,14 +16,20 @@
         <div>Empty list</div>
       </template>
     </BRow>
+    <BModal :id="movieInfoModalId" size="xl" hide-footer hide-header>
+      <p>modal</p>
+    </BModal>
   </BContainer>
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import MovieItem from "./MovieItem";
 export default {
   name: "MoviesList",
+  data: () => ({
+    movieInfoModalId: "movie-info",
+  }),
   components: {
     MovieItem,
   },
@@ -33,8 +40,12 @@ export default {
     },
   },
   computed: {
+    ...mapGetters("movies", ["isSearch"]),
     isExist() {
       return Boolean(Object.keys(this.list).length);
+    },
+    listTitle() {
+      return this.isSearch ? "Search result" : "IMDB Top 250";
     },
   },
   methods: {
@@ -50,6 +61,9 @@ export default {
       if (isConfirmed) {
         this.removeMovie(id);
       }
+    },
+    onShowMovieInfo() {
+      this.$bvModal.show(this.movieInfoModalId);
     },
   },
 };

@@ -50,7 +50,6 @@ export default {
       this.posterBg = poster;
     },
     onPageChanged(page) {
-      console.log(this.$route);
       this.changeCurrentPage(page);
     },
   },

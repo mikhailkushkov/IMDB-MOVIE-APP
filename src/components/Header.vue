@@ -7,6 +7,8 @@
           <BFormInput
             class="mr-sm-2 search-input"
             placeholder="Search"
+            v-model="searchValue"
+            debounce="500"
           ></BFormInput>
         </BNavForm>
       </BContainer>
@@ -15,8 +17,32 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
+
 export default {
   name: "Header",
+  data: () => ({
+    searchValue: "",
+  }),
+  watch: {
+    searchValue: "onSearchValueChanged",
+  },
+  methods: {
+    ...mapActions("movies", [
+      "searchMovies",
+      "fetchMovies",
+      "toggleSearchState",
+    ]),
+    onSearchValueChanged(val) {
+      if (val) {
+        this.searchMovies(val);
+        this.toggleSearchState(true);
+      } else {
+        this.fetchMovies();
+        this.toggleSearchState(false);
+      }
+    },
+  },
 };
 </script>
 

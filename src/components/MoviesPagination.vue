@@ -36,7 +36,6 @@ export default {
         return this.currentPage;
       },
       set(value) {
-        console.log(value);
         this.$emit("pageChanged", value);
       },
     },
